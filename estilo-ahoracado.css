@@ -15,7 +15,6 @@
     text-align: center;
     color: crimson;
     transition: all .5s ease;
-    transform: scale(0);
     min-height: 50px;
     margin-bottom: 0;
   }
@@ -91,4 +90,8 @@
   .encuadre {
     border: 2px dashed crimson;
     padding: 3px 2px 2px 6px;
+  }
+  .botonesLetras > button{
+    width: 50px;
+    height: 50px;
   }

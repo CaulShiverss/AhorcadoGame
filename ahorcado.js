@@ -9,7 +9,7 @@ let palabraArr = Array.from(palabra);
 
 const intentosSpan = document.getElementById("intentos")
 const aciertosH3 = document.getElementById("acierto")
-const msgFinalH1 = document.getElementById("msg-final")
+const msgFinal = document.getElementById("msg-final")
 let divBotones = document.getElementById("botonesLetras");
 let divGuiones = document.getElementById("guiones");
 
@@ -77,8 +77,24 @@ function pintarGuiones(palabra, aciertos) {
 
 function finJuego() {
     if (intentos == 0) {
-
+        msgFinal.textContent = "Has perdido!";
+        deshabilitarBotones();
+    } else if (comprobarGuiones()) {
+        msgFinal.textContent = "Has ganado!";
+        deshabilitarBotones();
     }
+}
+
+
+function comprobarGuiones() {
+    let guionesArr = Array.from(divGuiones.textContent);
+    return !guionesArr.includes('_'); // Retorna true si no hay guiones
+}
+    
+function deshabilitarBotones() {
+    document.querySelectorAll("#botonesLetras button").forEach(boton => {
+        boton.disabled = true;
+    });
 }
 
 // [+] ----- Funcion comprobarIntentos ----- [+]
@@ -96,16 +112,17 @@ function comprobarIntentos() {
     // ACIERTOS
     if (acierto && !letrasAcertadas.includes(letra)) {
         letrasAcertadas.push(letra);
-        aciertosH3.innerText = "Acertaste"
+        aciertosH3.innerText = "Bien!"
     } else {
     // FALLOS    
         intentos--
         intentosSpan.innerText = intentos
-        aciertosH3.innerText = "Fallaste"
+        aciertosH3.innerText = "Mal!"
         actualizarImagen();
     }
     // Actualizamos la visualización de la palabra (con aciertos y guiones)
     pintarGuiones(palabra, letrasAcertadas);
+    finJuego();
 }
 
 // [+] ----- Función inicio ----- [+]
@@ -113,6 +130,7 @@ function inicio() {
     intentos = 6;
     intentosSpan.innerText = intentos
     letrasAcertadas = [];
+    msgFinal.textContent = "";
     
     // Reiniciamos las imágenes
     document.querySelectorAll('picture img').forEach(img => {
@@ -124,5 +142,3 @@ function inicio() {
     crearBotones(abecedario);
 }
 
-// Llamamos a la función inicio una vez que el DOM se ha cargado
-document.addEventListener("DOMContentLoaded", inicio);
