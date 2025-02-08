@@ -73,6 +73,8 @@ function pintarGuiones(palabra, aciertos) {
         }
     }
     parrafo.textContent = res;
+    parrafo.style.textAlign = "center";
+    parrafo.style.fontSize = "24px";
     divGuiones.appendChild(parrafo);
 }
 
@@ -81,10 +83,12 @@ function finJuego() {
     // Si quedan 0 intentos termina la partida y mostramos el mensaje
     if (intentos == 0) {
         msgFinal.textContent = "Has perdido!";
+        msgFinal.style.color = "red";
         deshabilitarBotones();
     // Si no quedan guiones termina la partida y mostramos el mensaje    
     } else if (comprobarGuiones()) {
         msgFinal.textContent = "Has ganado!";
+        msgFinal.style.color = "green";
         deshabilitarBotones();
     }
 }
