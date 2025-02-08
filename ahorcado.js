@@ -1,12 +1,12 @@
 // [+] Variables Globales
-
 const palabras = ["Camion", "Perro", "Ahorcado", "Portatil", "DonPollo"];
-let letrasAcertadas = []; 
-let intentos = 6
 const abecedario = Array.from("ABCDEFGHIJKLMNÑOPQRSTUVWXYZ");
-let palabra = escogerPalabra(palabras);
-let palabraArr = Array.from(palabra);
+let letrasAcertadas = []; 
+let intentos;
+let palabra;
+let palabraArr;
 
+// [+] Elementos del DOM a usar
 const intentosSpan = document.getElementById("intentos")
 const aciertosH3 = document.getElementById("acierto")
 const msgFinal = document.getElementById("msg-final")
@@ -27,15 +27,16 @@ function crearBotones(abecedario) {
         let boton = document.createElement("button");
         boton.textContent = abecedario[i];
         
-        // Al hacer clic, ocultamos el botón y actualizamos la última letra pulsada
+        // Añadimos el evento 1. Al clicar desaparecen
         boton.addEventListener("click", function() {
             this.style.visibility = "hidden";
             ultimaLetraPulsada = this.textContent;
         });
         
-        // Comprobamos si la letra es parte de la palabra y actualizamos los aciertos
+        // Añadimos el evento 2. Al clicar se comprueba el intento
         boton.addEventListener("click", comprobarIntentos);
         
+        // Lo añadimos al DOM
         divBotones.appendChild(boton);
     }
 }
@@ -75,10 +76,13 @@ function pintarGuiones(palabra, aciertos) {
     divGuiones.appendChild(parrafo);
 }
 
+// [+] ----- Funcion finJuego ----- [+]
 function finJuego() {
+    // Si quedan 0 intentos termina la partida y mostramos el mensaje
     if (intentos == 0) {
         msgFinal.textContent = "Has perdido!";
         deshabilitarBotones();
+    // Si no quedan guiones termina la partida y mostramos el mensaje    
     } else if (comprobarGuiones()) {
         msgFinal.textContent = "Has ganado!";
         deshabilitarBotones();
@@ -86,11 +90,13 @@ function finJuego() {
 }
 
 
+// [+] ----- Funcion comprobarGuiones ----- [+]
 function comprobarGuiones() {
     let guionesArr = Array.from(divGuiones.textContent);
     return !guionesArr.includes('_'); // Retorna true si no hay guiones
 }
     
+// [+] ----- Funcion deshabilitarBotones ----- [+]
 function deshabilitarBotones() {
     document.querySelectorAll("#botonesLetras button").forEach(boton => {
         boton.disabled = true;
@@ -127,9 +133,13 @@ function comprobarIntentos() {
 
 // [+] ----- Función inicio ----- [+]
 function inicio() {
+    // Reiniciamos las variables
+    palabra = escogerPalabra(palabras)
+    palabraArr = Array.from(palabra)
     intentos = 6;
     intentosSpan.innerText = intentos
     letrasAcertadas = [];
+    aciertosH3.textContent = "";
     msgFinal.textContent = "";
     
     // Reiniciamos las imágenes
@@ -138,7 +148,7 @@ function inicio() {
     });
     document.getElementById('image6').classList.add('fade-in');
 
+    // Creamos los botones y los guiones
     pintarGuiones(palabra, letrasAcertadas);
     crearBotones(abecedario);
 }
-
