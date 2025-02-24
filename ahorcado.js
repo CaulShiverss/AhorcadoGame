@@ -1,7 +1,7 @@
 // [+] Variables Globales
 const palabras = ["Camion", "Perro", "Ahorcado", "Portatil", "DonPollo"];
 const abecedario = Array.from("ABCDEFGHIJKLMNÑOPQRSTUVWXYZ");
-let letrasAcertadas = []; 
+let letrasAcertadas = [];
 let intentos;
 let palabra;
 let palabraArr;
@@ -26,16 +26,16 @@ function crearBotones(abecedario) {
     for (let i = 0; i < abecedario.length; i++) {
         let boton = document.createElement("button");
         boton.textContent = abecedario[i];
-        
+
         // Añadimos el evento 1. Al clicar desaparecen
-        boton.addEventListener("click", function() {
+        boton.addEventListener("click", function () {
             this.style.visibility = "hidden";
             ultimaLetraPulsada = this.textContent;
         });
-        
+
         // Añadimos el evento 2. Al clicar se comprueba el intento
         boton.addEventListener("click", comprobarIntentos);
-        
+
         // Lo añadimos al DOM
         divBotones.appendChild(boton);
     }
@@ -85,7 +85,7 @@ function finJuego() {
         msgFinal.textContent = "Has perdido!";
         msgFinal.style.color = "red";
         deshabilitarBotones();
-    // Si no quedan guiones termina la partida y mostramos el mensaje    
+        // Si no quedan guiones termina la partida y mostramos el mensaje    
     } else if (comprobarGuiones()) {
         msgFinal.textContent = "Has ganado!";
         msgFinal.style.color = "green";
@@ -99,7 +99,7 @@ function comprobarGuiones() {
     let guionesArr = Array.from(divGuiones.textContent);
     return !guionesArr.includes('_'); // Retorna true si no hay guiones
 }
-    
+
 // [+] ----- Funcion deshabilitarBotones ----- [+]
 function deshabilitarBotones() {
     document.querySelectorAll("#botonesLetras button").forEach(boton => {
@@ -123,16 +123,77 @@ function comprobarIntentos() {
     if (acierto && !letrasAcertadas.includes(letra)) {
         letrasAcertadas.push(letra);
         aciertosH3.innerText = "Bien!"
+        aciertosH3.style.color = "green"
     } else {
-    // FALLOS    
+        // FALLOS    
         intentos--
         intentosSpan.innerText = intentos
         aciertosH3.innerText = "Mal!"
+        aciertosH3.style.color = "red"
         actualizarImagen();
     }
     // Actualizamos la visualización de la palabra (con aciertos y guiones)
     pintarGuiones(palabra, letrasAcertadas);
     finJuego();
+}
+
+// [+] ----- Función guardarPartida ----- [+]
+function guardarPartida() {
+    var estadoPartida = {
+        palabraG: palabra,
+        intentosG: intentos,
+        intentosSpanG: intentosSpan.innerText,
+        letrasAcertadasG: letrasAcertadas,
+        msgFinalG: msgFinal.textContent,
+        botonesOcultosG: []
+    };
+
+    // Recorrer los botones y guardar los que están ocultos
+    var botones = document.querySelectorAll("#botonesLetras button");
+    for (var i = 0; i < botones.length; i++) {
+        if (botones[i].style.visibility === "hidden") {
+            estadoPartida.botonesOcultosG.push(botones[i].textContent);
+        }
+    }
+
+    localStorage.setItem("estadoAnterior", JSON.stringify(estadoPartida));
+
+
+}
+
+// [+] ----- Función cargarPartida ----- [+]
+function cargarPartida() {
+
+    var estadoAnterior = JSON.parse(localStorage.getItem("estadoAnterior"));
+
+    if (!estadoAnterior) {
+        console.log("No hay partida guardada");
+        return;
+    }
+
+    palabra = estadoAnterior.palabraG;
+    palabraArr = Array.from(palabra);
+    intentos = estadoAnterior.intentosG;
+    intentosSpan.innerText = estadoAnterior.intentosSpanG;
+    letrasAcertadas = estadoAnterior.letrasAcertadasG;
+    msgFinal.textContent = estadoAnterior.msgFinalG;
+
+    // Restaurar botones
+    crearBotones(abecedario);
+    var botones = document.querySelectorAll("#botonesLetras button");
+
+    for (var i = 0; i < botones.length; i++) {
+        for (var j = 0; j < estadoAnterior.botonesOcultosG.length; j++) {
+            if (botones[i].textContent === estadoAnterior.botonesOcultosG[j]) {
+                botones[i].style.visibility = "hidden"; // Ocultar las letras ya pulsadas
+            }
+        }
+    }
+
+
+    pintarGuiones(palabra, letrasAcertadas)
+    actualizarImagen()
+
 }
 
 // [+] ----- Función inicio ----- [+]
@@ -145,7 +206,7 @@ function inicio() {
     letrasAcertadas = [];
     aciertosH3.textContent = "";
     msgFinal.textContent = "";
-    
+
     // Reiniciamos las imágenes
     document.querySelectorAll('picture img').forEach(img => {
         img.classList.remove('fade-in');
